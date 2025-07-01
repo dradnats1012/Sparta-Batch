@@ -9,11 +9,11 @@ async def sync_one_region(session, code, region_name, semaphore, conn):
     try:
         items = await fetch_and_parse(session, code, region_name, semaphore)
         if not items:
-            logging.warning(f"⚠ {region_name} 데이터 없음")
+            logging.warning(f"{region_name} 데이터 없음")
         else:
             upsert_store_data(conn, items)
     except Exception as e:
-        logging.exception(f"❌ {region_name} 처리 중 오류: {e}")
+        logging.exception(f"{region_name} 처리 중 오류: {e}")
 
 async def sync_all_regions(conn):
     codes = get_institution_codes()

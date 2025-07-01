@@ -28,9 +28,9 @@ async def fetch_page(session, instt_code, page, semaphore):
                 data = await resp.json()
                 return data.get("response", {}).get("body", {}).get("items", [])
         except asyncio.TimeoutError:
-            logger.error(f"❌ TimeoutError - 기관코드: {instt_code}, 페이지: {page}")
+            logger.error(f"TimeoutError - 기관코드: {instt_code}, 페이지: {page}")
         except Exception as e:
-            logger.exception(f"❌ 기타 오류 발생 - 기관코드: {instt_code}, 페이지: {page} - {e}")
+            logger.exception(f"기타 오류 발생 - 기관코드: {instt_code}, 페이지: {page} - {e}")
         return []
 
 

@@ -30,6 +30,6 @@ def transform_and_upsert_cleaned_data(conn):
               VALUES (tel_number), institution_name =
               VALUES (institution_name)
               """
-        logging.info("🧪 정제 테이블 UPSERT 시작")
+        logging.info("정제 테이블 UPSERT 시작")
         cursor.execute(sql)
-        logging.info("✅ 정제 테이블 UPSERT 완료")
+        logging.info("정제 테이블 UPSERT 완료")

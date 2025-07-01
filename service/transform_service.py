@@ -8,6 +8,6 @@ def run_transform_cleaned_store():
     try:
         transform_and_upsert_cleaned_data(conn)
     except Exception as e:
-        logging.exception("❌ 정제 테이블 변환 중 오류 발생")
+        logging.exception("정제 테이블 변환 중 오류 발생")
     finally:
         conn.close()

@@ -51,5 +51,5 @@ async def fetch_and_parse(session, instt_code, region_name, semaphore):
 
         page += 1
 
-    logger.info(f"📦 {region_name} 수집 완료 - 총 {len(items)}건")
+    logger.info(f"{region_name} 수집 완료 - 총 {len(items)}건")
     return items

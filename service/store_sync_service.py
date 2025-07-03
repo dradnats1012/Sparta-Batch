@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from aiohttp import ClientSession
-from api.fetcher import fetch_and_parse
+from api.store_fetcher import fetch_and_parse
 from db.institution_code import get_institution_codes
 from db.raw_store_repository import upsert_store_data
 

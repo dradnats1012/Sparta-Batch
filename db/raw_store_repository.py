@@ -41,6 +41,10 @@ def upsert_store_data(conn, items):
         for item in items:
             try:
                 mapped = convert_keys(item)
+
+                if not mapped["road_addr"]:
+                    mapped["road_addr"] = mapped["lotno_addr"]
+
                 cursor.execute(sql, mapped)
             except Exception as e:
                 logging.error(f"❌ UPSERT 실패 - {item.get('affiliateNm', '알 수 없음')}: {e}")

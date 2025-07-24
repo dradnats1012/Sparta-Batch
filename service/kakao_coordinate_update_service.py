@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from api.kakao_fetcher import get_coordinates
 from db.connection import get_db_connection
 from db.kakao_cleaned_store_repository import get_batch_after_id, update_coordinates
+from service.coordinate_sync_service import CoordinateSyncService
 from util.kakao_progress import load_progress, save_progress
 from config.kakao_logging import setup_logging
 
@@ -43,5 +44,8 @@ class KakaoCoordinateUpdateService:
             time.sleep(0.05)
 
         self.conn.commit()
+
+        CoordinateSyncService(self.conn).sync()
+
         save_progress(rows[-1]["id"])
         print(f"{len(rows)}개 처리완료. 마지막 ID: {rows[-1]['id']}")

@@ -4,38 +4,29 @@ class CoordinateSyncService:
 
     def sync(self):
         with self.conn.cursor() as cursor:
-            sql = """
-                INSERT INTO local_store_coordinate (
-                    id, store_name, local_bill, region, address,
-                    sector_name, main_product, tel_number,
-                    institution_code, institution_name, created_at,
-                    latitude, longitude, location
-                )
-                SELECT
-                    id, store_name, local_bill, region, address,
-                    sector_name, main_product, tel_number,
-                    institution_code, institution_name, created_at,
-                    latitude, longitude,
-                    ST_SRID(POINT(longitude, latitude), 4326)
-                FROM local_store_cleaned AS new
-                WHERE new.location IS NULL
-                  AND new.longitude IS NOT NULL
-                  AND new.latitude IS NOT NULL
-                ON DUPLICATE KEY UPDATE
-                    store_name = new.store_name,
-                    local_bill = new.local_bill,
-                    region = new.region,
-                    address = new.address,
-                    sector_name = new.sector_name,
-                    main_product = new.main_product,
-                    tel_number = new.tel_number,
-                    institution_code = new.institution_code,
-                    institution_name = new.institution_name,
-                    created_at = new.created_at,
-                    latitude = new.latitude,
-                    longitude = new.longitude,
-                    location = ST_SRID(POINT(new.longitude, new.latitude), 4326);
+            update_sql = """
+                UPDATE local_store_coordinate AS coord
+                JOIN local_store_cleaned AS new
+                    ON new.id = coord.cleaned_id
+                SET coord.location = ST_SRID(POINT(new.longitude, new.latitude), 4326)
+                WHERE new.longitude IS NOT NULL
+                  AND new.latitude IS NOT NULL;
             """
-            cursor.execute(sql)
-            self.conn.commit()
-            print("✅ 좌표 테이블 동기화 완료")
+            cursor.execute(update_sql)
+
+            insert_sql = """
+                INSERT INTO local_store_coordinate (cleaned_id, location)
+                SELECT
+                    new.id,
+                    ST_SRID(POINT(new.longitude, new.latitude), 4326)
+                FROM local_store_cleaned AS new
+                LEFT JOIN local_store_coordinate AS coord
+                    ON coord.cleaned_id = new.id
+                WHERE new.longitude IS NOT NULL
+                  AND new.latitude IS NOT NULL
+                  AND coord.cleaned_id IS NULL;
+            """
+            cursor.execute(insert_sql)
+
+        self.conn.commit()
+        print("✅ 좌표 테이블 동기화 완료")
